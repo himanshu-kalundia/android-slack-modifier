@@ -31,13 +31,25 @@ class SlackNotificationListener : NotificationListenerService() {
 
         if (title.contains(targetChannel, ignoreCase = true) || text.contains(targetChannel, ignoreCase = true)) {
             Log.d(TAG, "Match found for channel: $targetChannel")
+            
+            val soundUriString = prefs.getString("sound_uri", null)
+            if (soundUriString != null) {
+                try {
+                    playSound(Uri.parse(soundUriString))
+                    return
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error playing custom sound URI, falling back", e)
+                }
+            }
+
+            // Fallback to internal resource if URI is not set or fails
             val soundName = prefs.getString("sound_name", "important_tone") ?: "important_tone"
             val resId = resources.getIdentifier(soundName, "raw", packageName)
             
             if (resId != 0) {
                 playSound(Uri.parse("android.resource://$packageName/$resId"))
             } else {
-                Log.w(TAG, "Sound resource '$soundName' not found, playing default.")
+                Log.w(TAG, "No valid sound found, playing default.")
                 playDefaultSound()
             }
         }

@@ -1,14 +1,14 @@
 [
     {
-        "merged": "C:\\Users\\himan\\.gradle\\daemon\\8.5\\com.example.slacknotif.app-merged_res-28:\\raw_important_tone.mp3.flat",
-        "source": "C:\\Users\\himan\\.gradle\\daemon\\8.5\\com.example.slacknotif.app-main-30:\\raw\\important_tone.mp3"
+        "merged": "com.example.slacknotif.app-merged_res-28:/layout_activity_main.xml.flat",
+        "source": "com.example.slacknotif.app-main-30:/layout/activity_main.xml"
     },
     {
         "merged": "com.example.slacknotif.app-merged_res-28:/raw_important_tone.mp3.flat",
         "source": "com.example.slacknotif.app-main-30:/raw/important_tone.mp3"
     },
     {
-        "merged": "C:\\Users\\himan\\.gradle\\daemon\\8.5\\com.example.slacknotif.app-merged_res-28:\\layout_activity_main.xml.flat",
-        "source": "C:\\Users\\himan\\.gradle\\daemon\\8.5\\com.example.slacknotif.app-main-30:\\layout\\activity_main.xml"
+        "merged": "com.example.slacknotif.app-merged_res-28:/layout_activity_settings.xml.flat",
+        "source": "com.example.slacknotif.app-main-30:/layout/activity_settings.xml"
     }
 ]
