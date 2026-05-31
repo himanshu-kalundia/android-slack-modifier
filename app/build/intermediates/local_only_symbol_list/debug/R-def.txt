@@ -2,6 +2,7 @@ R_DEF: Internal format may change without notice
 local
 color background
 color divider
+color ic_launcher_background
 color on_background
 color on_primary
 color on_secondary
@@ -10,6 +11,8 @@ color primary
 color primary_variant
 color secondary
 color surface
+drawable ic_launcher_background
+drawable ic_launcher_foreground
 id btn_notif_access
 id btn_pick_sound
 id btn_save
@@ -22,6 +25,9 @@ id tv_subtitle
 id tv_title
 layout activity_main
 layout activity_settings
+mipmap ic_launcher
+mipmap ic_launcher_foreground
+mipmap ic_launcher_round
 raw important_tone
 string app_name
 string btn_choose_audio

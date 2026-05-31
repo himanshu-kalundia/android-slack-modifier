@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">Slack Notifier</string>
-    <string name="title_main">Slack Notifier</string>
+    <string name="app_name">Slanotif</string>
+    <string name="title_main">Slanotif</string>
     <string name="subtitle_main">Modify your Slack notification sounds for specific channels.</string>
     <string name="step_1">Step 1: Grant Permission</string>
     <string name="step_1_desc">The app needs permission to see notifications.</string>
