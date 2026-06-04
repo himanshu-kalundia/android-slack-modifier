@@ -1,0 +1,31 @@
+# Gradle files
+.gradle/
+build/
+/*/build/
+
+# IntelliJ IDEA / Android Studio files
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Local configuration file (SDK path, etc.)
+local.properties
+
+# Log files
+*.log
+
+# Keystores / Signing credentials (NEVER commit these)
+*.jks
+*.keystore
+
+# C/C++ build outputs
+.externalNativeBuild/
+.cxx/
+
+# Captures / Profiling data
+captures/
+
+# OS-generated files
+.DS_Store
+Thumbs.db
