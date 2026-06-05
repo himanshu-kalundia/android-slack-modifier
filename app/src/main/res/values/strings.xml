@@ -8,7 +8,11 @@
     <string name="step_2">Step 2: Configure</string>
     <string name="step_2_desc">Set which channel should trigger the custom sound.</string>
     <string name="btn_open_settings">Open Settings</string>
-    <string name="title_settings">Settings</string>
+    <string name="title_disclosure">Permission Disclosure</string>
+    <string name="disclosure_text">Slanotif needs <b>Notification Access</b> to detect when you receive messages on Slack. \n\n<b>How we use your data:</b>\n• We only read the title and text of Slack notifications to match your rules.\n• We <b>never</b> store, upload, or share your messages.\n• All processing happens locally on your device.\n\nBy clicking Accept, you agree to grant this permission.</string>
+    <string name="btn_accept">Accept &amp; Continue</string>
+    <string name="btn_exit">Exit</string>
+    <string name="empty_rules_desc">No notification rules added yet. Tap the button below to create your first rule!</string>
     <string name="hint_channel_name">Channel Name (e.g. general)</string>
     <string name="label_notif_sound">Notification Sound</string>
     <string name="no_sound_selected">No custom sound selected</string>
