@@ -16,13 +16,16 @@ import android.os.Looper
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 class SlackNotificationListener : NotificationListenerService() {
-    private val TAG = "SlackNotifListener"
+    private val TAG = "SlanotifService"
     private var mediaPlayer: MediaPlayer? = null
     private var silenceReceiver: BroadcastReceiver? = null
     private var volumeObserver: ContentObserver? = null
     private var audioManager: AudioManager? = null
+    private val gson = Gson()
 
     override fun onCreate() {
         super.onCreate()
@@ -36,21 +39,46 @@ class SlackNotificationListener : NotificationListenerService() {
         val extras = sbn.notification.extras
         val title = extras.getString("android.title") ?: ""
         val text = extras.getCharSequence("android.text")?.toString() ?: ""
+        val subText = extras.getCharSequence("android.subText")?.toString() ?: ""
 
-        Log.d(TAG, "Notification received: title=$title, text=$text")
+        Log.d(TAG, "New Slack Notification -> Title: '$title', Text: '$text', SubText: '$subText'")
 
         val prefs = getSharedPreferences("slack_prefs", Context.MODE_PRIVATE)
-        val targetChannel = prefs.getString("channel_name", "") ?: ""
-        
-        if (targetChannel.isBlank()) return
+        val rulesJson = prefs.getString("notification_rules", "[]")
+        val type = object : TypeToken<List<NotificationRule>>() {}.type
+        val rules: List<NotificationRule> = gson.fromJson(rulesJson, type)
 
-        if (title.contains(targetChannel, ignoreCase = true) || text.contains(targetChannel, ignoreCase = true)) {
-            val soundUriString = prefs.getString("sound_uri", null)
-            if (soundUriString != null) {
-                playSound(Uri.parse(soundUriString))
+        Log.d(TAG, "Active rules count: ${rules.size}")
+
+        // Find the BEST match (exact match or most specific)
+        var matchedRule: NotificationRule? = null
+
+        // Priority 1: Exact match in title (usually the channel/DM name)
+        matchedRule = rules.find { it.channelName.equals(title, ignoreCase = true) }
+        
+        // Priority 2: Contains match in title
+        if (matchedRule == null) {
+            matchedRule = rules.find { title.contains(it.channelName, ignoreCase = true) }
+        }
+
+        // Priority 3: Contains match in text or subText
+        if (matchedRule == null) {
+            matchedRule = rules.find { 
+                text.contains(it.channelName, ignoreCase = true) || 
+                subText.contains(it.channelName, ignoreCase = true) 
+            }
+        }
+
+        if (matchedRule != null) {
+            Log.d(TAG, "MATCH FOUND! Rule: '${matchedRule.channelName}', Sound: ${matchedRule.soundUri}")
+            val soundUri = matchedRule.soundUri
+            if (soundUri != null) {
+                playSound(Uri.parse(soundUri))
             } else {
                 playDefaultSound()
             }
+        } else {
+            Log.d(TAG, "No rule matched this notification.")
         }
     }
 
@@ -58,6 +86,7 @@ class SlackNotificationListener : NotificationListenerService() {
         stopCurrentSound()
         try {
             requestAudioFocus()
+            Log.d(TAG, "Attempting to play URI: $uri")
             mediaPlayer = MediaPlayer().apply {
                 setAudioAttributes(
                     AudioAttributes.Builder()
@@ -69,12 +98,11 @@ class SlackNotificationListener : NotificationListenerService() {
                 setDataSource(applicationContext, uri)
                 prepare()
                 start()
-                
                 setOnCompletionListener { cleanup() }
             }
             registerSilencers()
         } catch (e: Exception) {
-            Log.e(TAG, "Error playing sound", e)
+            Log.e(TAG, "Playback failed for URI: $uri", e)
             playDefaultSound()
         }
     }
@@ -90,7 +118,7 @@ class SlackNotificationListener : NotificationListenerService() {
                 registerSilencers()
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Error playing default sound", e)
+            Log.e(TAG, "Default sound failed", e)
         }
     }
 
@@ -132,7 +160,6 @@ class SlackNotificationListener : NotificationListenerService() {
     }
 
     private fun registerSilencers() {
-        // 1. Register BroadcastReceiver for Power button/Screen events
         if (silenceReceiver == null) {
             silenceReceiver = object : BroadcastReceiver() {
                 override fun onReceive(context: Context?, intent: Intent?) {
@@ -153,7 +180,6 @@ class SlackNotificationListener : NotificationListenerService() {
             }
         }
 
-        // 2. Register ContentObserver for Volume buttons
         if (volumeObserver == null) {
             volumeObserver = object : ContentObserver(Handler(Looper.getMainLooper())) {
                 override fun onChange(selfChange: Boolean) {

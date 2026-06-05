@@ -1,82 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="24dp">
+    android:layout_height="match_parent">
 
     <TextView
+        android:id="@+id/tv_settings_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/title_settings"
         android:textSize="24sp"
         android:textStyle="bold"
         android:textColor="@color/primary"
-        android:layout_marginBottom="24dp"/>
+        android:layout_margin="24dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
 
-    <com.google.android.material.textfield.TextInputLayout
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_rules"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/tv_settings_title"
+        app:layout_constraintBottom_toTopOf="@id/btn_add_rule"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_add_rule"
+        style="@style/Widget.MaterialComponents.Button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/hint_channel_name"
-        android:layout_marginBottom="16dp">
+        android:text="Add New Rule"
+        android:layout_margin="16dp"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_channel_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/label_notif_sound"
-        android:textStyle="bold"
-        android:layout_marginBottom="8dp"/>
-
-    <com.google.android.material.card.MaterialCardView
-        style="@style/Widget.SlackNotif.Card"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <TextView
-                android:id="@+id/tv_sound_uri"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/no_sound_selected"
-                android:ellipsize="middle"
-                android:singleLine="true"
-                android:layout_marginBottom="12dp"/>
-
-            <Button
-                android:id="@+id/btn_pick_sound"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/btn_choose_audio" />
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
-
-    <Button
-        android:id="@+id/btn_test_sound"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/btn_test_sound"
-        android:layout_marginBottom="16dp"/>
-
-    <Button
-        android:id="@+id/btn_save"
-        style="@style/Widget.SlackNotif.Button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/btn_save_config" />
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
