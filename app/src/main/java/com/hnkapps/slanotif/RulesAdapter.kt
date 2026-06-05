@@ -27,7 +27,7 @@ class RulesAdapter(
     override fun onBindViewHolder(holder: RuleViewHolder, position: Int) {
         val rule = rules[position]
         holder.tvChannelName.text = rule.channelName
-        holder.tvSoundName.text = "Sound: ${rule.soundUri ?: "Default"}"
+        holder.tvSoundName.text = "Sound: ${rule.soundName ?: "Default Tone"}"
         
         holder.btnDelete.setOnClickListener { onDelete(rule) }
         holder.itemView.setOnClickListener { onEdit(rule) }

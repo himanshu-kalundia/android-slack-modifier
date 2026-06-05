@@ -67,34 +67,70 @@
                     <div class="phone-camera">
                         <div class="camera-lens"></div>
                     </div>
-                    <div class="app-screen">
+                    <div class="app-screen" style="position: relative; overflow: hidden;">
                         <div class="app-header">
-                            <span class="app-title">Slanotif Settings</span>
+                            <span class="app-title">Slanotif Dashboard</span>
                             <div class="logo-dot" id="status-dot"></div>
                         </div>
-
+                        
                         <!-- Status Card -->
                         <div class="status-card" id="app-status-card">
                             <div class="status-title" id="app-status-title">Permission Granted</div>
-                            <div class="status-desc" id="app-status-desc">Listening to notifications...</div>
+                            <div class="status-desc" id="app-status-desc">Active & Listening...</div>
                         </div>
-
-                        <!-- Configuration Form -->
-                        <div class="input-group">
-                            <label class="input-label" for="mock-channel-input">Target Channel / User</label>
-                            <input type="text" id="mock-channel-input" class="app-input" value="critical-alerts"
-                                placeholder="e.g. general, alerts">
-                        </div>
-
-                        <div class="input-group">
-                            <label class="input-label">Notification Sound</label>
-                            <div class="sound-picker-mock" id="mock-sound-picker">
-                                <span class="sound-name" id="mock-sound-name">important_tone.mp3</span>
-                                <span class="sound-icon">🎵 Choose</span>
+                        
+                        <!-- Rules List -->
+                        <div class="mock-rules-list" id="mock-rules-list">
+                            <div class="mock-rule-item" data-sound="0">
+                                <div class="mock-rule-info">
+                                    <span class="mock-rule-title">critical-alerts</span>
+                                    <span class="mock-rule-sound">🎵 important_tone.mp3</span>
+                                </div>
+                                <span class="mock-rule-play">▶</span>
+                            </div>
+                            <div class="mock-rule-item" data-sound="1">
+                                <div class="mock-rule-info">
+                                    <span class="mock-rule-title">@manager</span>
+                                    <span class="mock-rule-sound">🎵 Ringtone: Chime</span>
+                                </div>
+                                <span class="mock-rule-play">▶</span>
+                            </div>
+                            <div class="mock-rule-item" data-sound="2">
+                                <div class="mock-rule-info">
+                                    <span class="mock-rule-title">outage</span>
+                                    <span class="mock-rule-sound">🎵 critical_alarm.wav</span>
+                                </div>
+                                <span class="mock-rule-play">▶</span>
                             </div>
                         </div>
 
-                        <button class="app-btn" id="mock-save-btn">Test Configuration</button>
+                        <!-- Floating Action Button -->
+                        <button class="mock-fab" id="mock-add-btn">+</button>
+
+                        <!-- Add Rule Dialog -->
+                        <div class="mock-dialog-overlay" id="mock-dialog-overlay">
+                            <div class="mock-dialog-card">
+                                <span class="mock-dialog-title">Add New Rule</span>
+                                
+                                <div class="input-group" style="margin-bottom: 0.5dp;">
+                                    <label class="input-label" for="mock-channel-input">Channel / Keyword</label>
+                                    <input type="text" id="mock-channel-input" class="app-input" placeholder="e.g. general, deploy">
+                                </div>
+
+                                <div class="input-group" style="margin-bottom: 0.5dp;">
+                                    <label class="input-label">Notification Sound</label>
+                                    <div class="sound-picker-mock" id="mock-sound-picker">
+                                        <span class="sound-name" id="mock-sound-name">chime_alert.ogg</span>
+                                        <span class="sound-icon">🎵 Choose</span>
+                                    </div>
+                                </div>
+
+                                <div class="mock-dialog-actions">
+                                    <button class="mock-btn-cancel" id="mock-dialog-cancel">Cancel</button>
+                                    <button class="mock-btn-save" id="mock-dialog-save">Save Rule</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -149,9 +185,8 @@
                         Slanotif. This is required to detect incoming Slack alerts locally.</p>
                 </div>
                 <div class="feature-card" style="padding: 2rem;">
-                    <h3>3. Pick Channel & Sound</h3>
-                    <p>Type the exact name of your priority Slack channel (or DM user) in the settings panel, select a
-                        custom audio tone, and tap Save. You are all set!</p>
+                    <h3>3. Add Alert Rules</h3>
+                    <p>Tap the floating "+" button, type the exact Slack channel or keyword, select a system tone or custom audio file, and tap Save. Add as many rules as you want!</p>
                 </div>
             </div>
         </section>
@@ -178,14 +213,98 @@
             const statusTitle = document.getElementById('app-status-title');
             const statusDesc = document.getElementById('app-status-desc');
             const statusDot = document.getElementById('status-dot');
-            const saveBtn = document.getElementById('mock-save-btn');
+
+            const rulesList = document.getElementById('mock-rules-list');
+            const addBtn = document.getElementById('mock-add-btn');
+            const dialogOverlay = document.getElementById('mock-dialog-overlay');
+            const dialogCancel = document.getElementById('mock-dialog-cancel');
+            const dialogSave = document.getElementById('mock-dialog-save');
             const soundPicker = document.getElementById('mock-sound-picker');
             const soundName = document.getElementById('mock-sound-name');
             const channelInput = document.getElementById('mock-channel-input');
 
             let isActive = true;
-            let soundIndex = 0;
-            const sounds = ['important_tone.mp3', 'critical_alarm.wav', 'chime_alert.ogg', 'default_beep.mp3'];
+            let soundIndex = 1;
+            const sounds = ['important_tone.mp3', 'Ringtone: Chime', 'critical_alarm.wav', 'default_beep.mp3'];
+
+            // Synthesize beep patterns using Web Audio API
+            function playSynthesizedSound(index) {
+                try {
+                    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    
+                    if (index === 0) { // C5 -> E5
+                        osc.frequency.setValueAtTime(523.25, ctx.currentTime);
+                        osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.12);
+                        gain.gain.setValueAtTime(0.08, ctx.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.start();
+                        osc.stop(ctx.currentTime + 0.45);
+                    } else if (index === 1) { // High Double Chime
+                        const osc2 = ctx.createOscillator();
+                        const gain2 = ctx.createGain();
+                        
+                        osc.frequency.setValueAtTime(880, ctx.currentTime); // A5
+                        gain.gain.setValueAtTime(0.06, ctx.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.start();
+                        osc.stop(ctx.currentTime + 0.22);
+                        
+                        osc2.frequency.setValueAtTime(1046.50, ctx.currentTime + 0.1); // C6
+                        gain2.gain.setValueAtTime(0.06, ctx.currentTime + 0.1);
+                        gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+                        osc2.connect(gain2);
+                        gain2.connect(ctx.destination);
+                        osc2.start();
+                        osc2.stop(ctx.currentTime + 0.32);
+                    } else if (index === 2) { // Sawtooth alarm
+                        osc.type = 'sawtooth';
+                        osc.frequency.setValueAtTime(380, ctx.currentTime);
+                        osc.frequency.linearRampToValueAtTime(480, ctx.currentTime + 0.3);
+                        gain.gain.setValueAtTime(0.04, ctx.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.start();
+                        osc.stop(ctx.currentTime + 0.4);
+                    } else { // Standard default beep
+                        osc.frequency.setValueAtTime(600, ctx.currentTime);
+                        gain.gain.setValueAtTime(0.08, ctx.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.start();
+                        osc.stop(ctx.currentTime + 0.22);
+                    }
+                } catch (e) {
+                    console.log('Web Audio blocked or unsupported');
+                }
+            }
+
+            // Bind rule play clicks
+            function bindRuleClicks() {
+                document.querySelectorAll('.mock-rule-item').forEach(item => {
+                    // Remove old listener if any to prevent duplicates
+                    item.onclick = null;
+                    item.onclick = (e) => {
+                        const sIdx = parseInt(item.getAttribute('data-sound') || '3', 10);
+                        playSynthesizedSound(sIdx);
+                        
+                        // Brief item pulse animation
+                        item.style.borderColor = 'var(--slack-blue)';
+                        setTimeout(() => {
+                            item.style.borderColor = 'rgba(255, 255, 255, 0.08)';
+                        }, 300);
+                    };
+                });
+            }
+
+            bindRuleClicks();
 
             // Toggle active status
             statusCard.addEventListener('click', () => {
@@ -195,7 +314,7 @@
                     statusCard.style.borderColor = 'hsla(155, 60%, 45%, 0.3)';
                     statusTitle.textContent = 'Permission Granted';
                     statusTitle.style.color = 'var(--slack-green)';
-                    statusDesc.textContent = 'Listening to notifications...';
+                    statusDesc.textContent = 'Active & Listening...';
                     statusDot.style.backgroundColor = 'var(--slack-green)';
                     statusDot.style.boxShadow = '0 0 10px var(--slack-green)';
                 } else {
@@ -209,53 +328,53 @@
                 }
             });
 
-            // Toggle sound names
+            // Toggle sound names inside add rule dialog
             soundPicker.addEventListener('click', () => {
                 soundIndex = (soundIndex + 1) % sounds.length;
                 soundName.textContent = sounds[soundIndex];
             });
 
-            // Simulate Save/Test Button
-            saveBtn.addEventListener('click', () => {
-                const channel = channelInput.value.trim() || 'alerts';
-                saveBtn.textContent = 'Testing Tone...';
-                saveBtn.style.opacity = '0.7';
+            // Open dialog
+            addBtn.addEventListener('click', () => {
+                dialogOverlay.classList.add('open');
+                channelInput.focus();
+            });
 
-                // Play a brief synthesized beep using web audio API to simulate tone test
-                try {
-                    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                    const osc = ctx.createOscillator();
-                    const gain = ctx.createGain();
+            // Cancel dialog
+            dialogCancel.addEventListener('click', () => {
+                dialogOverlay.classList.remove('open');
+                channelInput.value = '';
+            });
 
-                    // Simple frequency pattern based on selected sound index
-                    if (soundIndex === 0) {
-                        osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
-                        osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.15); // E5
-                    } else if (soundIndex === 1) {
-                        osc.type = 'sawtooth';
-                        osc.frequency.setValueAtTime(440, ctx.currentTime); // Alarm
-                    } else {
-                        osc.frequency.setValueAtTime(880, ctx.currentTime);
-                    }
+            // Save dialog rule
+            dialogSave.addEventListener('click', () => {
+                const name = channelInput.value.trim();
+                if (!name) return;
 
-                    osc.connect(gain);
-                    gain.connect(ctx.destination);
-                    gain.gain.setValueAtTime(0.08, ctx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.45);
+                // Create a new rule item
+                const newItem = document.createElement('div');
+                newItem.className = 'mock-rule-item';
+                newItem.setAttribute('data-sound', soundIndex.toString());
+                
+                const soundLabel = sounds[soundIndex].includes('.') ? sounds[soundIndex] : `Ringtone: ${sounds[soundIndex]}`;
+                newItem.innerHTML = `
+                    <div class="mock-rule-info">
+                        <span class="mock-rule-title">${name}</span>
+                        <span class="mock-rule-sound">🎵 ${soundLabel}</span>
+                    </div>
+                    <span class="mock-rule-play">▶</span>
+                `;
 
-                    osc.start();
-                    osc.stop(ctx.currentTime + 0.5);
-                } catch (e) {
-                    console.log('Web Audio not supported or blocked');
-                }
+                // Add to list and re-bind clicks
+                rulesList.appendChild(newItem);
+                bindRuleClicks();
 
-                setTimeout(() => {
-                    saveBtn.textContent = `Alert Set for #${channel}!`;
-                    setTimeout(() => {
-                        saveBtn.textContent = 'Test Configuration';
-                        saveBtn.style.opacity = '1';
-                    }, 1500);
-                }, 500);
+                // Close overlay
+                dialogOverlay.classList.remove('open');
+                channelInput.value = '';
+
+                // Play the sound
+                playSynthesizedSound(soundIndex);
             });
         });
     </script>

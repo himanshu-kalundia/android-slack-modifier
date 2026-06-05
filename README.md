@@ -39,12 +39,12 @@ Slanotif requires permission to see incoming system notifications to filter Slac
 2. Tap the **Enable Notification Access** button.
 3. Locate **Slanotif** in the system list and toggle the permission switch to **ON**.
 
-### 3. Add Custom Tones & Set Rules
-1. Copy your custom audio files (MP3, WAV, or OGG) to your phone's storage.
-2. Open Slanotif and go to **Settings**.
+### 3. Configure Your Rules
+1. (Optional) Copy your custom audio files (MP3, WAV, or OGG) to your phone's storage.
+2. Open Slanotif and tap the floating **`+`** (FAB) button.
 3. Type the exact channel name or keyword you want to target (e.g., `production-alerts` or `boss-name`).
-4. Tap **Choose Sound** to select your custom audio file.
-5. Tap **Save** to activate.
+4. Tap **Choose Sound** and select either a **System Tone** or an **External Audio File**.
+5. Tap **Save Rule**. Add as many custom alert rules as you need!
 
 ---
 

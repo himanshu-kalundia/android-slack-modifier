@@ -495,6 +495,168 @@ h1 {
     cursor: pointer;
 }
 
+/* Dashboard Mockup Rules List */
+.mock-rules-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    overflow-y: auto;
+    flex: 1;
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.mock-rule-item {
+    background-color: #171226;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    padding: 0.85rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.mock-rule-item:hover {
+    border-color: hsla(265, 80%, 50%, 0.4);
+    background-color: hsla(265, 45%, 12%, 0.6);
+}
+
+.mock-rule-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.mock-rule-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.mock-rule-sound {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.mock-rule-play {
+    font-size: 1rem;
+    color: var(--slack-blue);
+    opacity: 0.7;
+    transition: var(--transition-smooth);
+}
+
+.mock-rule-item:hover .mock-rule-play {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+/* Mock FAB */
+.mock-fab {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--gradient-primary);
+    border: none;
+    color: #fff;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4), var(--shadow-glow);
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    z-index: 15;
+}
+
+.mock-fab:hover {
+    transform: scale(1.15) rotate(90deg);
+}
+
+/* Dialog Mockup Overlay */
+.mock-dialog-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(12, 8, 23, 0.85);
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 1.25rem;
+    transform: translateY(100%);
+    transition: var(--transition-smooth);
+    backdrop-filter: blur(8px);
+}
+
+.mock-dialog-overlay.open {
+    transform: translateY(0);
+}
+
+.mock-dialog-card {
+    background-color: #171226;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.mock-dialog-title {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.mock-dialog-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.mock-btn-cancel {
+    background-color: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary);
+    padding: 0.65rem;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    flex: 1;
+    transition: var(--transition-smooth);
+}
+
+.mock-btn-cancel:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.mock-btn-save {
+    background: var(--gradient-primary);
+    border: none;
+    color: #fff;
+    padding: 0.65rem;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    flex: 1;
+    transition: var(--transition-smooth);
+}
+
+.mock-btn-save:hover {
+    opacity: 0.9;
+}
+
+
 /* Privacy Policy Layout */
 .privacy-container {
     padding: 4rem 0 8rem;

@@ -25,6 +25,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import android.app.Activity
 import android.media.RingtoneManager
+import android.provider.OpenableColumns
 import java.util.UUID
 
 class MainActivity : AppCompatActivity() {
@@ -34,6 +35,7 @@ class MainActivity : AppCompatActivity() {
     private val gson = Gson()
     
     private var tempSoundUri: String? = null
+    private var tempSoundName: String? = null
     private var dialogSoundText: TextView? = null
 
     // Launcher for external file picker
@@ -42,7 +44,8 @@ class MainActivity : AppCompatActivity() {
             try {
                 contentResolver.takePersistableUriPermission(it, Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 tempSoundUri = it.toString()
-                dialogSoundText?.text = "Selected: ${it.lastPathSegment ?: "Custom Sound"}"
+                tempSoundName = getSoundNameFromUri(it)
+                dialogSoundText?.text = "Selected: $tempSoundName"
             } catch (e: Exception) {
                 Toast.makeText(this, "Failed to get permission for this file", Toast.LENGTH_SHORT).show()
             }
@@ -55,7 +58,8 @@ class MainActivity : AppCompatActivity() {
             val uri = result.data?.getParcelableExtra<Uri>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
             uri?.let {
                 tempSoundUri = it.toString()
-                dialogSoundText?.text = "Selected: ${it.lastPathSegment ?: "System Tone"}"
+                tempSoundName = getSoundNameFromUri(it)
+                dialogSoundText?.text = "Selected: $tempSoundName"
             }
         }
     }
@@ -132,6 +136,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun showEditDialog(rule: NotificationRule?) {
         tempSoundUri = rule?.soundUri
+        tempSoundName = rule?.soundName
         
         val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_edit_rule, null)
         val etName = dialogView.findViewById<EditText>(R.id.et_channel_name)
@@ -142,7 +147,7 @@ class MainActivity : AppCompatActivity() {
         if (rule != null) {
             tvTitle.text = "Edit Rule"
             etName.setText(rule.channelName)
-            dialogSoundText?.text = if (rule.soundUri != null) "Selected: ${Uri.parse(rule.soundUri).lastPathSegment}" else "No sound selected"
+            dialogSoundText?.text = "Selected: ${rule.soundName ?: "Default"}"
         } else {
             tvTitle.text = "Add New Rule"
         }
@@ -179,14 +184,38 @@ class MainActivity : AppCompatActivity() {
                 if (rule != null) {
                     rule.channelName = name
                     rule.soundUri = tempSoundUri
+                    rule.soundName = tempSoundName
                 } else {
-                    rules.add(NotificationRule(UUID.randomUUID().toString(), name, tempSoundUri))
+                    rules.add(NotificationRule(UUID.randomUUID().toString(), name, tempSoundUri, tempSoundName))
                 }
                 adapter.updateRules(rules)
                 saveRules()
             }
             .setNegativeButton("Cancel", null)
             .show()
+    }
+
+    private fun getSoundNameFromUri(uri: Uri): String {
+        var name = "Unknown Sound"
+        try {
+            // Try RingtoneManager first (for system tones)
+            val ringtone = RingtoneManager.getRingtone(this, uri)
+            if (ringtone != null) {
+                name = ringtone.getTitle(this)
+            } else {
+                // Try ContentResolver (for external files)
+                contentResolver.query(uri, null, null, null, null)?.use { cursor ->
+                    val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                    if (cursor.moveToFirst() && nameIndex != -1) {
+                        name = cursor.getString(nameIndex)
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            // Fallback to last segment of URI
+            name = uri.lastPathSegment ?: "Custom Sound"
+        }
+        return name
     }
 
     private fun updateStatus() {
