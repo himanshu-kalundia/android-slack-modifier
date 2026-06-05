@@ -31,7 +31,7 @@ Unlike many notification managers, Slanotif is built with strict privacy constra
 ## 🚀 How to Setup
 
 ### 1. Download and Install
-Get the latest build directly from the [GitHub Releases](https://github.com/himan/slack_notification_modifier/releases) page and install the APK on your Android device (ensure "Install from Unknown Sources" is enabled in your browser/file manager).
+Get the latest build directly from the [GitHub Releases](https://github.com/himanshu-kalundia/android-slack-modifier/releases) page and install the APK on your Android device (ensure "Install from Unknown Sources" is enabled in your browser/file manager).
 
 ### 2. Grant Notification Access
 Slanotif requires permission to see incoming system notifications to filter Slack alerts:
@@ -60,7 +60,7 @@ To build the project locally or make modifications:
 ### Build Steps
 1. Clone the repository:
    ```bash
-   git clone https://github.com/himan/slack_notification_modifier.git
+   git clone https://github.com/himanshu-kalundia/android-slack-modifier.git
    ```
 2. Open Android Studio and select **Open an existing project**, choosing the `android_project` subdirectory.
 3. Click the **Sync Project with Gradle Files** icon.
