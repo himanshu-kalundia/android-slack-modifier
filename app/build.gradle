@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace "com.example.slacknotif"
+    namespace "com.hnkapps.slanotif"
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.example.slacknotif"
+        applicationId "com.hnkapps.slanotif"
         minSdk 21
         targetSdk 34
         versionCode 1
@@ -17,7 +17,8 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
